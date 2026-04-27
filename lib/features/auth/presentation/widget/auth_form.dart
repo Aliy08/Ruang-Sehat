@@ -5,6 +5,7 @@ import 'package:ruang_sehat/features/auth/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:ruang_sehat/features/home/screens/home_screen.dart';
 import 'package:ruang_sehat/utils/snackbar_helper.dart';
+import 'package:ruang_sehat/widget/bottom_navbar.dart';
 
 class AuthForm extends StatefulWidget {
   final bool isLogin;
@@ -71,7 +72,8 @@ class _AuthFormState extends State<AuthForm> {
       if (widget.isLogin) {
         Navigator.pushReplacementNamed(
           context,
-          HomeScreen.routeName,
+          BottomNavbar.routeName,
+          arguments: 0,
         );
       } else {
         widget.onSwitchToLogin();
