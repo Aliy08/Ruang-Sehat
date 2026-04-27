@@ -28,9 +28,12 @@ class _DetailScreenState extends State<DetailScreen> {
       final args = ModalRoute.of(context)!.settings.arguments as Map;
       final isMe = args['isMe'] ?? false;
       final id = args['id'];
+
+      context.read<ArticlesProvider>().getDetailArticle(id);
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     final provider = context.watch<ArticlesProvider>();
 

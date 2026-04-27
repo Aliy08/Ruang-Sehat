@@ -5,7 +5,7 @@ import 'package:ruang_sehat/features/articles/presentation/widgets/my_articles_c
 
 class ArticlesProvider with ChangeNotifier {
   List<ArticlesModel> _articles = [];
-  List<ArticlesModel> __myArticles = [];
+  List<ArticlesModel> _myArticles = [];
   ArticlesModel? _detailArticle;
 
   bool _isLoading = false;
@@ -14,7 +14,7 @@ class ArticlesProvider with ChangeNotifier {
 
   // Getter
   List<ArticlesModel> get articles => _articles;
-  List<ArticlesModel> get myArticles => __myArticles;
+  List<ArticlesModel> get myArticles => _myArticles;
   ArticlesModel? get detailArticle => _detailArticle;
 
   bool get isLoading => _isLoading;
@@ -48,14 +48,14 @@ class ArticlesProvider with ChangeNotifier {
 
     try {
       final result = await ArticlesServices.getMyArticles();
-      __myArticles = result;
+      _myArticles = result;
 
       if (result.isEmpty) {
         _errorMessage = "Data artikel kosong";
       }
     } catch (err) {
       _errorMessage = _parseError(err);
-      __myArticles = [];
+      _myArticles = [];
     } finally {
       _setLoading(false);
     }

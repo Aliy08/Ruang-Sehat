@@ -156,7 +156,7 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
                 decoration: InputDecoration(
                   fillColor: AppColors.secondary,
                   filled: true,
-                  hintText: 'Enter the Article Category',
+                  hintText: 'Enter the Article Title',
                   isDense: true,
                   hintStyle: const TextStyle(
                     color: AppColors.hintText,

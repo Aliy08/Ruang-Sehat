@@ -38,7 +38,7 @@ class ArticlesServices {
     }
 
     if (decoded['status'] != true) {
-      if (decoded['message'] != null &&
+      if (decoded['errors'] != null &&
           decoded['errors'] is List &&
           decoded['errors'].isNotEmpty) {
         throw Exception(decoded['errors'][0]['message']);
@@ -46,6 +46,7 @@ class ArticlesServices {
         throw Exception(decoded['message'] ?? 'Terjadi kesalahan');
       }
     }
+    return decoded['data'];
   }
 
   // get all articles

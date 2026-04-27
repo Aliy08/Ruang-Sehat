@@ -118,7 +118,7 @@ class MyArticlesCard extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            "The Benefits of Running and Tips to Get Started",
+                            myArticle.tittle,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
