@@ -53,7 +53,7 @@ class RecomendedCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       image: DecorationImage(
-                        image: AssetImage("assets/images/artikel1.jpg"),
+                        image: NetworkImage('$baseUrl/${article.image}'),
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
                       ),

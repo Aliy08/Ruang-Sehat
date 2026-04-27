@@ -7,24 +7,21 @@ class ArticlesProvider with ChangeNotifier {
   List<ArticlesModel> _articles = [];
   List<ArticlesModel> _myArticles = [];
   ArticlesModel? _detailArticle;
-
   bool _isLoading = false;
   String? _errorMessage;
   String? _successMessage;
 
-  // Getter
+  ArticlesModel? get detailArticle => _detailArticle;
   List<ArticlesModel> get articles => _articles;
   List<ArticlesModel> get myArticles => _myArticles;
-  ArticlesModel? get detailArticle => _detailArticle;
-
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   String? get successMessage => _successMessage;
 
-  // get all articles
   Future<void> getArticles() async {
     _setLoading(true);
-    _resetMessages();
+    _resetMessage();
+    notifyListeners();
 
     try {
       final result = await ArticlesServices.getArticles();
@@ -33,18 +30,18 @@ class ArticlesProvider with ChangeNotifier {
       if (result.isEmpty) {
         _errorMessage = "Data artikel kosong";
       }
-    } catch (err) {
-      _errorMessage = _parseError(err);
+    } catch (e) {
+      _errorMessage = _parseError(e);
       _articles = [];
     } finally {
       _setLoading(false);
     }
   }
 
-  // get my articles
   Future<void> getMyArticles() async {
     _setLoading(true);
-    _resetMessages();
+    _resetMessage();
+    notifyListeners();
 
     try {
       final result = await ArticlesServices.getMyArticles();
@@ -53,21 +50,22 @@ class ArticlesProvider with ChangeNotifier {
       if (result.isEmpty) {
         _errorMessage = "Data artikel kosong";
       }
-    } catch (err) {
-      _errorMessage = _parseError(err);
+    } catch (e) {
+      _errorMessage = _parseError(e);
       _myArticles = [];
     } finally {
       _setLoading(false);
     }
   }
 
-  // get detail article
   Future<void> getDetailArticle(String id) async {
     _setLoading(true);
-    _resetMessages();
+    _resetMessage();
+    notifyListeners();
 
     try {
       final result = await ArticlesServices.getDetailArticle(id);
+      _detailArticle = result;
     } catch (e) {
       _errorMessage = _parseError(e);
       _detailArticle = null;
@@ -76,15 +74,14 @@ class ArticlesProvider with ChangeNotifier {
     }
   }
 
-  // Helper
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  void _resetMessages() {
-    _errorMessage = null;
+  void _resetMessage() {
     _successMessage = null;
+    _errorMessage = null;
   }
 
   String _parseError(Object e) {

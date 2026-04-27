@@ -20,13 +20,12 @@ class FeaturedCard extends StatelessWidget {
           }
 
           if (provider.articles.isEmpty) {
-            return const Center(child: Text("Tidak ada artikel"));
+            return const Center(child: Text('Tidak ada artikel'));
           }
-
           return ListView.separated(
             scrollDirection: Axis.horizontal,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
             itemCount: provider.articles.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final article = provider.articles[index];
               return GestureDetector(
@@ -49,17 +48,17 @@ class FeaturedCard extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: Column(
                         children: [
-                          // Image articles
+                          //image
                           Stack(
                             children: [
                               Container(
-                                width: 75,
-                                height: 75,
+                                width: double.infinity,
+                                height: 196,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(20),
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                      "$baseUrl/${article.image}",
+                                      '$baseUrl/${article.image}',
                                     ),
                                     fit: BoxFit.cover,
                                     alignment: Alignment.topCenter,
@@ -78,33 +77,32 @@ class FeaturedCard extends StatelessWidget {
                                     color: AppColors.primary,
                                     borderRadius: BorderRadius.circular(99),
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      article.category,
-                                      style: TextStyle(
-                                        color: AppColors.primary,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                  child: Text(
+                                    article.category,
+                                    style: TextStyle(
+                                      color: AppColors.secondary,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-
-                          // Article Title
+                          //title
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '🔥Trending no.1 ${index + 1}',
+                                        '🔥Trending no ${index + 1}',
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: AppColors.hintText,
@@ -125,7 +123,7 @@ class FeaturedCard extends StatelessWidget {
                                     article.tittle,
                                     style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),
                                     maxLines: 2,
