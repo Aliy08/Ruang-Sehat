@@ -81,7 +81,7 @@ class RecomendedCard extends StatelessWidget {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    'Healty Tips',
+                                    article.category,
                                     style: TextStyle(
                                       color: AppColors.primary,
                                       fontSize: 12,
@@ -91,7 +91,7 @@ class RecomendedCard extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '2026-01-27',
+                                article.date,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.hintText,
@@ -101,7 +101,7 @@ class RecomendedCard extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            'The Benefits of Running and Tips to Get Started',
+                            article.tittle,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
