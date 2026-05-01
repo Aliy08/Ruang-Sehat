@@ -9,4 +9,5 @@ class AppColors {
   static const Color border = Color(0xFFE7E7E7);
   static const Color success = Color(0xFF47B9B9);
   static const Color error = Color(0xFFF83043);
+  static const Color sheetError = Color(0xFFFFE0E3);
 }

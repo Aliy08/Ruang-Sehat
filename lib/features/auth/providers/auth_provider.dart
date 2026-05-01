@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:ruang_sehat/features/auth/data/auth_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -93,5 +94,31 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Provider Logout
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final token = prefs.getString('token');
+
+    if (token == null) {
+      _errorMessage = 'Token tidak ditemukan';
+      notifyListeners();
+      return;
+    }
+
+    final response = await AuthServices.logout();
+
+    final data =jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      await prefs.remove('token');
+      _successMessage = data ['message'] ?? 'Logout berhasil';
+    } else {
+      _errorMessage = data['message'] ?? 'Terjadi kesalahan';
+    }
+
+    notifyListeners();
   }
 }

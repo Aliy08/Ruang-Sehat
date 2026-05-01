@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,4 +61,75 @@ class ArticlesServices {
     final data = await _getRequest(id);
     return ArticlesModel.fromJson(data);
   }
+
+  // Create Artikel
+  static Future<http.StreamedResponse> createArtikel(
+    File image,
+    String title,
+    String description,
+    String category,
+  ) async {
+    final uri = Uri.parse('$articlesBaseUrl/create');
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var request = http.MultipartRequest('POST', uri);
+    request.headers['Authorization'] = 'Bearer $token';
+
+    request.fields['title'] = title;
+    request.fields['description'] = description;
+    request.fields['date'] = DateTime.now().toIso8601String();
+    request.fields['category'] = category;
+    request.files.add(await http.MultipartFile.fromPath('image', image.path));
+
+    return await request.send();
+  }
+
+  //  Update Artikel
+  static Future<http.StreamedResponse> updateArtikel(
+    String id, {
+    File? image,
+    String? title,
+    String? description,
+    String? category,
+  }) async {
+    final uri = Uri.parse('$articlesBaseUrl/update/$id');
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var request = http.MultipartRequest('PUT', uri);
+    request.headers['Authorization'] = 'Bearer $token';
+
+    if (title != null && title.isEmpty) request.fields['title'] = title;
+    if (description != null && description.isEmpty) {
+      request.fields['description'] = description;
+    }
+    if (category != null && category.isEmpty) {
+      request.fields['category'] = category;
+    }
+    if (image != null) {
+      request.files.add(await http.MultipartFile.fromPath('image', image.path));
+    }
+
+
+    return await request.send();
+  }
+
+  static Future<http.Response> deleteArtikel(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var url = Uri.parse('$articlesBaseUrl/delete/$id');
+
+    final response = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    return response;
+  }
+
+  //
 }

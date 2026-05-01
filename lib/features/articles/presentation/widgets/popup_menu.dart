@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:ruang_sehat/features/articles/presentation/screens/form_article_screen.dart';
 
 class PopupMenu extends StatelessWidget{
-  const PopupMenu ({super.key});
+  final String articleId;
+
+  const PopupMenu ({super.key, required this.articleId});
 
   @override
   Widget build (BuildContext context) {
@@ -28,7 +30,7 @@ class PopupMenu extends StatelessWidget{
                   Navigator.pushNamed(
                     context, 
                     FormArticleScreen.routeName,
-                    arguments: {'isEdit' : true},
+                    arguments: {'isEdit' : true, 'articleId' : articleId},
                   );
                 }
               ),

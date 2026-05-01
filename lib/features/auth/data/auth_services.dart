@@ -1,6 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthServices {
   static String baseUrl = dotenv.env['BASE_URL']!;
@@ -38,6 +39,22 @@ class AuthServices {
         'password': password,
         "appSource": "kesehatan",
       }),
+    );
+  }
+
+  // Fungsi Service Logout
+  static Future<http.Response> logout() async {
+    final url = Uri.parse('$authBaseUrl/logout');
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    return await http.post(
+      url,
+      headers: {
+        'Content-Type' : 'application/json',
+        'Authorization' : 'Bearer $token',
+      },
     );
   }
 }

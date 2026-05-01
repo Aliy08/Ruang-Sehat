@@ -100,15 +100,18 @@ class RecomendedCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                          Text(
-                            article.tittle,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              article.tittle,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),

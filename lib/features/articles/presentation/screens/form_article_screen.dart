@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ruang_sehat/theme/app_colors.dart';
+import 'package:ruang_sehat/features/articles/presentation/widgets/image_input.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
+import 'package:ruang_sehat/utils/snackbar_helper.dart';
 
 class FormArticleScreen extends StatefulWidget {
   const FormArticleScreen({super.key});
@@ -14,6 +19,77 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
+
+  String? imagePath;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        imagePath = pickedFile.path;
+      });
+    } 
+  }
+
+  Future<void> handleSubmit(bool isEdit, String? articleId) async {
+    final provider = context.read<ArticlesProvider>();
+
+    // validasi image hanya saat create
+    if (!isEdit && imagePath == null) {
+      SnackbarHelper.show(
+        context, 
+        message: 'Pilih gambar terlebih dahulu',
+        isError: true,
+      );
+      return;
+    }
+
+    if (isEdit) {
+      // validasi artikel id
+      if (articleId == null) {
+        SnackbarHelper.show(
+          context, 
+          message: "ID artikel tidak ditemukan",
+          isError: true,
+        );
+        return;
+      }
+
+      await provider.updateArticle(
+        articleId,
+        title: titleController.text,
+        imagePath: imagePath,
+      );
+
+    } else {
+      await provider.createArticle(
+        titleController.text, 
+        descriptionController.text,
+        categoryController.text,
+        imagePath!,
+      );
+    }
+
+    if (!mounted) return;
+
+    if (provider.errorMessage == null) {
+      SnackbarHelper.show(
+        context, 
+        message: provider.successMessage ?? 'Success',
+        isError: false,
+      );
+      Navigator.pop(context);
+
+    } else {
+      SnackbarHelper.show(
+        context, 
+        message: provider.errorMessage ?? 'error',
+        isError: true,
+      );
+
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +120,10 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Image input
+              ImageInput(onTap: _pickImage, imagePath: imagePath),
+              const SizedBox(height: 20),
+
               // Label form title
               Text(
                 'Title',
@@ -189,7 +269,9 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(20),
           child: ElevatedButton(
-            onPressed: () async {},
+            onPressed: () async {
+              handleSubmit(isEdit,isEdit ? articleId : null);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               minimumSize: const Size(double.infinity, 55),
