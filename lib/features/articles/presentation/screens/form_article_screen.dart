@@ -29,7 +29,7 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
       setState(() {
         imagePath = pickedFile.path;
       });
-    } 
+    }
   }
 
   Future<void> handleSubmit(bool isEdit, String? articleId) async {
@@ -38,7 +38,7 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
     // validasi image hanya saat create
     if (!isEdit && imagePath == null) {
       SnackbarHelper.show(
-        context, 
+        context,
         message: 'Pilih gambar terlebih dahulu',
         isError: true,
       );
@@ -49,7 +49,7 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
       // validasi artikel id
       if (articleId == null) {
         SnackbarHelper.show(
-          context, 
+          context,
           message: "ID artikel tidak ditemukan",
           isError: true,
         );
@@ -61,10 +61,9 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
         title: titleController.text,
         imagePath: imagePath,
       );
-
     } else {
       await provider.createArticle(
-        titleController.text, 
+        titleController.text,
         descriptionController.text,
         categoryController.text,
         imagePath!,
@@ -75,19 +74,17 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
 
     if (provider.errorMessage == null) {
       SnackbarHelper.show(
-        context, 
+        context,
         message: provider.successMessage ?? 'Success',
         isError: false,
       );
       Navigator.pop(context);
-
     } else {
       SnackbarHelper.show(
-        context, 
+        context,
         message: provider.errorMessage ?? 'error',
         isError: true,
       );
-
     }
   }
 
@@ -270,7 +267,7 @@ class _FormArticleScreenState extends State<FormArticleScreen> {
           padding: const EdgeInsets.all(20),
           child: ElevatedButton(
             onPressed: () async {
-              handleSubmit(isEdit,isEdit ? articleId : null);
+              handleSubmit(isEdit, isEdit ? articleId : null);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,

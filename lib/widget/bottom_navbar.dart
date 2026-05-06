@@ -5,6 +5,7 @@ import 'package:ruang_sehat/theme/app_colors.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:ruang_sehat/features/auth/providers/auth_provider.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({super.key});
@@ -25,9 +26,24 @@ class _BottomNavbarState extends State<BottomNavbar> {
     super.initState();
     Future.microtask(() {
       final articleProvider = context.read<ArticlesProvider>();
+      final authProvider = context.read<AuthProvider>();
+
       articleProvider.getArticles();
       articleProvider.getMyArticles();
+      authProvider.getProfile();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isFirstLoad) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args != null && args is int) {
+        _selectedIndex = args;
+      }
+      _isFirstLoad = false;
+    }
   }
 
   @override

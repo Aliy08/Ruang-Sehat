@@ -2,6 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:ruang_sehat/features/articles/presentation/screens/form_article_screen.dart';
+import 'package:ruang_sehat/widget/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
+import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
+import 'package:ruang_sehat/utils/snackbar_helper.dart';
+import 'package:ruang_sehat/widget/bottom_navbar.dart';
 
 class PopupMenu extends StatelessWidget{
   final String articleId;
@@ -40,6 +45,45 @@ class PopupMenu extends StatelessWidget{
                   'Delete Article',
                   style: TextStyle(color: Colors.red),
                 ),
+                onTap:  () {
+                  ModalBottomSheet.show(
+                    context: context, 
+                    label: 'Are you sure you want to delete this article?', 
+                    isLogout: false,
+                    onConfirm: () async {
+                      final articleProvider = context.read<ArticlesProvider>();
+                      final navigator = Navigator.of(context);
+
+                      // tutup bottom sheet
+                      navigator.pop();
+
+                      await articleProvider.deleteArticle(articleId);
+
+                      if (articleProvider.errorMessage == null) {
+                        SnackbarHelper.show(
+                          context,
+                          message: articleProvider.successMessage ?? 'Success',
+                          isError: false,
+                        );
+
+                        navigator.pushNamedAndRemoveUntil(
+                          BottomNavbar.routeName, 
+                          (route) => false,
+                          arguments: 1,
+                          
+                        );
+
+                      } else {
+                        SnackbarHelper.show(
+                          context, 
+                          message: articleProvider.errorMessage ?? 'Error',
+                          isError: true,
+                        );
+
+                      }
+                    }, 
+                  );
+                },
               ),
             ],
           ),

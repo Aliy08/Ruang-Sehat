@@ -7,27 +7,31 @@ import 'package:ruang_sehat/features/articles/presentation/screens/detail_screen
 
 class FeaturedCard extends StatelessWidget {
   const FeaturedCard({super.key});
-  static final String baseUrl = dotenv.env['BASE_URL']!;
+
+  static final String baseUrl =
+      (dotenv.env['BASE_URL'] ?? '').replaceAll(RegExp(r'/*$'), '');
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: 312,
       child: Consumer<ArticlesProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (provider.articles.isEmpty) {
+          if (provider.featuredArticles.isEmpty) {
             return const Center(child: Text('Tidak ada artikel'));
           }
+
           return ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: provider.articles.length,
             separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemCount: provider.featuredArticles.length,
             itemBuilder: (context, index) {
-              final article = provider.articles[index];
+              final article = provider.featuredArticles[index];
+
               return GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(
@@ -39,6 +43,7 @@ class FeaturedCard extends StatelessWidget {
                 child: SizedBox(
                   width: 260,
                   child: Card(
+                    margin: EdgeInsets.zero,
                     color: AppColors.secondary,
                     clipBehavior: Clip.antiAlias,
                     shape: RoundedRectangleBorder(
@@ -48,7 +53,7 @@ class FeaturedCard extends StatelessWidget {
                       padding: const EdgeInsets.all(4.0),
                       child: Column(
                         children: [
-                          //image
+                          // image
                           Stack(
                             children: [
                               Container(
@@ -69,7 +74,7 @@ class FeaturedCard extends StatelessWidget {
                                 top: 10,
                                 left: 10,
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 4,
                                   ),
@@ -79,7 +84,7 @@ class FeaturedCard extends StatelessWidget {
                                   ),
                                   child: Text(
                                     article.category,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: AppColors.secondary,
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
@@ -89,10 +94,12 @@ class FeaturedCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                          //title
+
+                          // title
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.all(12.0),
+                              padding:
+                                  const EdgeInsets.fromLTRB(12, 10, 12, 10),
                               child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -103,7 +110,7 @@ class FeaturedCard extends StatelessWidget {
                                     children: [
                                       Text(
                                         '🔥Trending no ${index + 1}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 12,
                                           color: AppColors.hintText,
                                           fontWeight: FontWeight.w500,
@@ -111,7 +118,7 @@ class FeaturedCard extends StatelessWidget {
                                       ),
                                       Text(
                                         article.date,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 12,
                                           color: AppColors.hintText,
                                           fontWeight: FontWeight.w500,
@@ -123,9 +130,9 @@ class FeaturedCard extends StatelessWidget {
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                       article.tittle,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.black,
-                                        fontSize: 14,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       maxLines: 2,

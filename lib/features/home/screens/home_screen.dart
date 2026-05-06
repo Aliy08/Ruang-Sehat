@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:ruang_sehat/features/auth/providers/auth_provider.dart';
 import 'package:ruang_sehat/utils/snackbar_helper.dart';
 import 'package:ruang_sehat/features/auth/presentation/screens/auth.screen.dart';
+import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -39,9 +40,16 @@ class HomeScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Hi, Meow',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  Consumer<AuthProvider>(
+                    builder: (context, provider, _) {
+                      return Text(
+                        'Hi, ${provider.profile?.name ?? 'user'}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    },
                   ),
                   Text(
                     'How are you feeling today ?',
@@ -108,51 +116,66 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Text featured
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Featured',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                  const Text(
-                    'See More >',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.hintText,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo.metrics.pixels >=
+              scrollInfo.metrics.maxScrollExtent - 200) {
+            final provider = context.read<ArticlesProvider>();
 
-            // Featured card
-            Padding(
-              padding: const EdgeInsets.only(left: 24, bottom: 16),
-              child: FeaturedCard(),
-            ),
-
-            // Recomended Card
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  const Text(
-                    'Recommended',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 16),
-                  RecomendedCard(),
-                ],
+            if (!provider.isFetchingMore && provider.hasNextPage) {
+              provider.getArticles(isRefresh: false);
+            }
+          }
+          return true;
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Text featured
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Featured',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                    const Text(
+                      'See More >',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.hintText,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              // Featured card
+              Padding(
+                padding: const EdgeInsets.only(left: 24, bottom: 16),
+                child: FeaturedCard(),
+              ),
+
+              // Recomended Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Recommended',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 16),
+                    RecomendedCard(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

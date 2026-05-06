@@ -53,9 +53,9 @@ class MyArticlesScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(
-            context, 
+            context,
             FormArticleScreen.routeName,
-            arguments: {'isEdit' : false},
+            arguments: {'isEdit': false},
           );
         },
         backgroundColor: AppColors.primary,

@@ -2,6 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ruang_sehat/features/auth/data/user_model.dart';
 
 class AuthServices {
   static String baseUrl = dotenv.env['BASE_URL']!;
@@ -57,4 +58,31 @@ class AuthServices {
       },
     );
   }
+
+  // Fungsi service get profile
+  static Future<UserModel> getProfile() async {
+    final url = Uri.parse('$baseUrl/auth/profile');
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      }
+    );
+
+    if (response.statusCode == 200) {
+      final decode = jsonDecode(response.body);
+      final data = decode['data'];
+      return UserModel.fromJson(data);
+
+    } else {
+      throw Exception('gagal mengambil profile');
+
+    }
+  }
+
 }
