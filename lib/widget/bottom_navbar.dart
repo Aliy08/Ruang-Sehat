@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ruang_sehat/features/auth/presentation/screens/profile_screen.dart';
 import 'package:ruang_sehat/features/home/screens/home_screen.dart';
 import 'package:ruang_sehat/features/articles/presentation/screens/my_articles_screen.dart';
 import 'package:ruang_sehat/theme/app_colors.dart';
@@ -19,7 +20,7 @@ class BottomNavbar extends StatefulWidget {
 class _BottomNavbarState extends State<BottomNavbar> {
   int _selectedIndex = 0;
   bool _isFirstLoad = true;
-  List<Widget> get _pages => [HomeScreen(), MyArticlesScreen()];
+  List<Widget> get _pages => [HomeScreen(), MyArticlesScreen(), ProfileScreen()];
 
   @override
   void initState() {
@@ -69,6 +70,10 @@ class _BottomNavbarState extends State<BottomNavbar> {
           BottomNavigationBarItem(
             icon: Icon(LucideIcons.newspaper),
             label: 'My Articles',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(LucideIcons.user),
+            label: 'Profile',
           ),
         ],
       ),

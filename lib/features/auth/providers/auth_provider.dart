@@ -74,6 +74,8 @@ class AuthProvider with ChangeNotifier {
             await prefs.setString('token', token);
           }
 
+          await getProfile();
+
           _successMessage = data['message'] ?? 'Login berhasil';
           return true;
         }
@@ -113,11 +115,11 @@ class AuthProvider with ChangeNotifier {
 
     final response = await AuthServices.logout();
 
-    final data =jsonDecode(response.body);
+    final data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
       await prefs.remove('token');
-      _successMessage = data ['message'] ?? 'Logout berhasil';
+      _successMessage = data['message'] ?? 'Logout berhasil';
     } else {
       _errorMessage = data['message'] ?? 'Terjadi kesalahan';
     }
@@ -127,26 +129,58 @@ class AuthProvider with ChangeNotifier {
 
   // Provider Get Profile
   Future<void> getProfile() async {
-   final prefs = await SharedPreferences.getInstance();
-   final token = prefs.getString('token');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-   if (token == null) {
-    _errorMessage = 'Token tidak ditemukan';
+    if (token == null) {
+      _errorMessage = 'Token tidak ditemukan';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
-    return;
-   }
 
-   try {
-    final result = await AuthServices.getProfile();
-    _profile = result;
-     notifyListeners();
-     _successMessage = 'Profile berhasil dibuat';
-
-   } catch(e) {
-    _errorMessage = e.toString();
-   }
-
-   notifyListeners();
+    try {
+      final result = await AuthServices.getProfile();
+      _profile = result;
+      _successMessage = null;
+    } catch (e) {
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
+  // Provider Update Profile
+  Future<bool> updateProfile({
+    required String name,
+    required String username,
+    String? password,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    _successMessage = null;
+    notifyListeners();
+
+    try {
+      final result = await AuthServices.updateProfile(
+        name: name,
+        username: username,
+        password: password,
+      );
+
+      _profile = result;
+      _successMessage = 'Berhasil memperbarui profil';
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

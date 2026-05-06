@@ -53,8 +53,8 @@ class AuthServices {
     return await http.post(
       url,
       headers: {
-        'Content-Type' : 'application/json',
-        'Authorization' : 'Bearer $token',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
       },
     );
   }
@@ -66,23 +66,72 @@ class AuthServices {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      }
-    );
+    if (token == null || token.isEmpty) {
+      throw Exception('Token tidak ditemukan');
+    }
 
-    if (response.statusCode == 200) {
-      final decode = jsonDecode(response.body);
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    final decode = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && decode['success'] == true) {
       final data = decode['data'];
       return UserModel.fromJson(data);
-
     } else {
-      throw Exception('gagal mengambil profile');
-
+      throw Exception(decode['message'] ?? 'Gagal mengambil profile');
     }
   }
 
+  // Fungsi Update Profile
+  static Future<UserModel> updateProfile({
+    required String name,
+    required String username,
+    String? password,
+  }) async {
+    final url = Uri.parse('$authBaseUrl/profile');
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Token tidak ditemukan');
+    }
+
+    final body = <String, String>{
+      'name': name,
+      'username': username,
+    };
+
+    // password opsional
+    if (password != null && password.trim().isNotEmpty) {
+      body['password'] = password.trim();
+    }
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: body,
+    );
+
+    final decode = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && decode['success'] == true) {
+      final data = decode['data'];
+      return UserModel.fromJson(data);
+    } else {
+      // ambil error message jika ada
+      if (decode['errors'] is List && decode['errors'].isNotEmpty) {
+        throw Exception(
+            decode['errors'][0]['message'] ?? 'Gagal update profile');
+      }
+      throw Exception(decode['message'] ?? 'Gagal update profile');
+    }
+  }
 }

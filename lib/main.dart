@@ -10,6 +10,7 @@ import 'package:ruang_sehat/widget/bottom_navbar.dart';
 import 'package:ruang_sehat/features/articles/providers/articles_provider.dart';
 import 'package:ruang_sehat/features/articles/presentation/screens/detail_screen.dart';
 import 'package:ruang_sehat/features/articles/presentation/screens/form_article_screen.dart';
+import 'package:ruang_sehat/features/auth/presentation/screens/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         BottomNavbar.routeName: (context) => const BottomNavbar(),
         DetailScreen.routeName: (context) => const DetailScreen(),
         FormArticleScreen.routeName: (context) => const FormArticleScreen(),
+        ProfileScreen.routeName: (context) => const ProfileScreen(),
       },
     );
   }
