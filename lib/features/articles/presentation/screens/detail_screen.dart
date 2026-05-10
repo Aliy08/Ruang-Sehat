@@ -26,8 +26,14 @@ class _DetailScreenState extends State<DetailScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)!.settings.arguments as Map;
-      final isMe = args['isMe'] ?? false;
-      final id = args['id'];
+
+      final bool argIsMe = args['isMe'] == true;
+      final String id = (args['id'] ?? '').toString();
+
+      // FIX: simpan ke state, bukan variabel lokal
+      setState(() {
+        isMe = argIsMe;
+      });
 
       context.read<ArticlesProvider>().getDetailArticle(id);
     });
@@ -38,11 +44,15 @@ class _DetailScreenState extends State<DetailScreen> {
     final provider = context.watch<ArticlesProvider>();
 
     if (provider.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     if (provider.detailArticle == null) {
-      return const Center(child: Text("Tidak ada artikel"));
+      return const Scaffold(
+        body: Center(child: Text("Tidak ada artikel")),
+      );
     }
 
     final article = provider.detailArticle!;
@@ -59,6 +69,7 @@ class _DetailScreenState extends State<DetailScreen> {
               height: 500,
               fit: BoxFit.cover,
             ),
+
             // Gradient overlay
             Align(
               alignment: Alignment.topCenter,
@@ -87,7 +98,7 @@ class _DetailScreenState extends State<DetailScreen> {
               child: ContainerDetail(article: article),
             ),
 
-            // Back button
+            // Back button + menu
             Positioned(
               top: 25,
               left: 25,
@@ -114,6 +125,8 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                     ),
                   ),
+
+                  // FIX: sekarang isMe akan benar
                   if (isMe)
                     Container(
                       width: 45,
@@ -123,8 +136,8 @@ class _DetailScreenState extends State<DetailScreen> {
                         color: AppColors.text.withOpacity(0.3),
                       ),
                       child: IconButton(
-                        onPressed: () => {
-                          setState(() => isMenuOpen = !isMenuOpen),
+                        onPressed: () {
+                          setState(() => isMenuOpen = !isMenuOpen);
                         },
                         icon: const Icon(
                           Icons.more_horiz,
@@ -138,18 +151,18 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
 
             // Popup menu
-            if (isMenuOpen) ... [
+            if (isMenuOpen) ...[
               Positioned.fill(
                 child: GestureDetector(
-                  onTap:  () {
-                    setState(() {
-                      isMenuOpen = false;
-                    });
-                  },
+                  onTap: () => setState(() => isMenuOpen = false),
                   child: Container(color: Colors.transparent),
                 ),
               ),
-              Positioned(top: 80, right: 20, child : PopupMenu(articleId: article.id)),
+              Positioned(
+                top: 80,
+                right: 20,
+                child: PopupMenu(articleId: article.id),
+              ),
             ],
           ],
         ),

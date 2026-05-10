@@ -13,13 +13,15 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+// nilai untuk text form field
+class _ProfileScreenState extends State<ProfileScreen> { 
   final nameController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
   bool _prefilled = false;
 
+// ambil data profile saat halaman pertama kali di buka
   @override
   void initState() {
     super.initState();
@@ -32,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+// bersihkan controller saat halaman di dispose untuk menghindari memory leak
   @override
   void dispose() {
     nameController.dispose();
@@ -40,11 +43,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+// fungsi untuk mengisi data lama ke form jika belum diisi, agar user bisa lihat data lama sebagai referensi saat ingin mengedit
   void _prefillIfNeeded(AuthProvider auth) {
     final p = auth.profile;
     if (p == null) return;
 
-    // Prefill hanya sekali, biar tidak menimpa saat user sedang mengetik
     if (!_prefilled) {
       nameController.text = p.name;
       usernameController.text = p.username;
@@ -74,6 +77,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+// fungsi untuk menangani proses edit profile saat tombol simpan ditekan
+// trim() untuk menghilangkan spasi di awal/akhir input, dan validasi agar name dan username tidak boleh kosong
   Future<void> _handleEdit() async {
     final auth = context.read<AuthProvider>();
 
@@ -92,12 +97,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
+// Memanggil method Provider → Provider memanggil service → API PUT /auth/profile.
     final ok = await auth.updateProfile(
       name: name,
       username: username,
       password: password,
     );
 
+// Menghindari error jika user sudah pindah halaman saat request masih berjalan.
     if (!mounted) return;
 
     if (ok) {
